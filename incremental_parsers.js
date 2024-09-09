@@ -1,3 +1,4 @@
+// MIT License. Author: Gabriel Dottl, 9/9/24.
 import { jsonrepair } from 'jsonrepair'; // Import the jsonrepair library
 import { z } from 'zod';
 
