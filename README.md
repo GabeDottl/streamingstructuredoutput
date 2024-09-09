@@ -1,7 +1,7 @@
 # Streaming JSON and Structured Outputs with the OpenAI API via javascript
-In the process of building my new AI project, [CoachMorgan.ai](https://www.coachmorgan.ai), I switched to the [Structured Output API](https://platform.openai.com/docs/guides/structured-outputs) from OpenAI.
+In the process of building my new AI project, [CoachMorgan.ai](https://www.coachmorgan.ai), I adopted the [Structured Output API](https://platform.openai.com/docs/guides/structured-outputs) from OpenAI for building my chat interface.
 
-Unfortunately, while trying to improve the first-character latency of my chat application, I discovered neither the JSON or Structured Output APIs support streaming just yet and support from other LLMs will likely also lag.
+Unfortunately, while trying to improve the first-character latency of my chat application, I discovered neither the JSON or Structured Output APIs support streaming yet and support from other LLMs will probably lag.
 
 After searching around GitHub, Reddit and elsewhere for an existing solution to this problem, I found none and so I built this one for myself and others to use.
 
