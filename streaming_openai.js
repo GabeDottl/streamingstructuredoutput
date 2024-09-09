@@ -62,7 +62,7 @@ export async function* chatStructuredOutputStream({ openai=DEFAULT_OPENAI, model
   const structuredParser = new IncrementalStructuredOutputParser({ zodSchema: structuredOutputFormat });
 
   try {
-    const streamResponse = await openai.beta.chat.completions.parse({
+    const streamResponse = await openai.chat.completions.create({
       model,
       messages,
       stream: true,

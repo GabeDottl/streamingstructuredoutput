@@ -20,7 +20,7 @@ export class IncrementalJsonParser {
       if (error instanceof SyntaxError) {
         try {
           // Attempt to repair the JSON string
-          return extendedJsonRepair(this.partialString);
+          return JSON.parse(extendedJsonRepair(this.partialString));
         } catch (repairError) {
           console.warn(`Failed to parse JSON:\n${this.partialString}\n\n${repairError}`);
           // If repair fails, throw the repair error
@@ -51,7 +51,11 @@ export class IncrementalStructuredOutputParser {
     }
 
     // Use the Zod schema to coerce and validate the parsed JSON
-    return this.schema.parse(parsedJson);
+    try {
+      return this.schema.parse(parsedJson);
+    } catch (error) {
+      console.info(`Failed to fit to schema: ${JSON.stringify(parsedJson, null, 2)}.\n\n${error}`); 
+    }
   }
 }
 
@@ -85,7 +89,7 @@ export function extendedJsonRepair(brokenJson, attempts = 3) {
     if (attempts <= 1) {
       throw error;
     }
-    console.warn(`Failed to repair JSON (${brokenJson}): ${error.message}`);
+    // console.warn(`Failed to repair JSON (${brokenJson}): ${error.message}`);
     const partiallyFixedJson = repairUnclosedStrings(extractEscapedCode(brokenJson));
     return extendedJsonRepair(partiallyFixedJson, attempts - 1);
   }
@@ -108,57 +112,3 @@ function extractEscapedCode(str) {
   }
   return str;
 }
-
-// Example Usage
-
-const brokenJson = `{
-  "message": "Love is a complex set of emotions, behaviors, and beliefs associated with strong feelings of affection, protectiveness, warmth,`;
-
-
-const jsonWithBackticks = `
-\`\`\`
-{
-  "message": "Love is a complex set of emotions, behaviors, and beliefs associated with strong feelings of affection, protectiveness, warmth,
-\`\`\`
-`;
-
-
-const jsonWithJsonBackticks = `json
-\`\`\`
-{
-  "message": "Love is a complex set of emotions, behaviors, and beliefs associated with strong feelings of affection, protectiveness, warmth,
-\`\`\`
-`;
-
-// Example incomplete structured output chunks
-const incompleteJsonChunks = [
-  '{"message": "This is a test", "count": 10, ',
-  '"isActive": tru',
-  'e}',
-];
-
-// console.log(extendedJsonRepair(brokenJson));
-// console.log(extendedJsonRepair(jsonWithBackticks));
-// console.log(extendedJsonRepair(jsonWithJsonBackticks));
-
-// Define the expected structured output schema
-const structuredOutputFormat = z.object({
-  message: z.string(),
-  count: z.number(),
-  isActive: z.boolean().optional(),
-});
-const parser = new IncrementalStructuredOutputParser({ zodSchema: structuredOutputFormat });
-
-// Process the chunks using the incremental parser
-incompleteJsonChunks.forEach((chunk) => {
-  try {
-    const parsedOutput = parser.parseChunk(chunk);
-    if (parsedOutput) {
-      console.log('Parsed and validated output:', parsedOutput);
-    } else {
-      console.log('Waiting for more chunks...');
-    }
-  } catch (error) {
-    console.error('Failed to parse or validate structured output:', error.message);
-  }
-});
