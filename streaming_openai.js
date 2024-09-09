@@ -1,3 +1,4 @@
+// MIT License. Author: Gabriel Dottl, 9/9/24.
 import { IncrementalJsonParser, IncrementalStructuredOutputParser } from "./incremental_parsers";
 
 import OpenAI from "openai";
